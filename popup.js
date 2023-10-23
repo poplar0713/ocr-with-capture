@@ -1,33 +1,17 @@
-document.getElementById("captureBtn").addEventListener("click", function() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        const tab = tabs[0];
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            files: ['html2canvas.min.js']
-        }, () => {
+document.getElementById('captureButton').addEventListener('click', function() {
+    // 현재 활성 탭을 가져온다.
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        const activeTab = tabs[0];
+        if (activeTab) {
             chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                code: captureCode()
+                target: { tabId: activeTab.id },
+                function: startSelection
             });
-        });
+        }
     });
 });
 
-function captureCode() {
-    const format = document.getElementById("fileFormat").value;
-    const saveTo = document.getElementById("saveTo").value;
-
-    return `
-        html2canvas(document.body).then(canvas => {
-            const dataUrl = canvas.toDataURL('image/${format}');
-            if ('${saveTo}' === 'clipboard') {
-                navigator.clipboard.writeText(dataUrl);
-            } else {
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = 'capture.${format}';
-                link.click();
-            }
-        });
-    `;
+function startSelection() {
+    // 메세지 전달
+    window.postMessage({ type: "START_SELECTION" }, '*');
 }
