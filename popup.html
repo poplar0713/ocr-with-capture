@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>ocr-with-capture</title>
-    <script src="html2canvas.min.js"></script>
-    <script src="popup.js"></script>
+    <meta charset="UTF-8">
+    <title>OCR with Capture</title>
+    <link rel="stylesheet" type="text/css" href="./capture.css" />
 </head>
 <body>
-    <button id="captureBtn">capture</button>
+    <button id="captureButton">캡쳐 시작</button>
     <div>
-        Save to:
+        저장 방식 설정
         <select id="saveTo">
-            <option value="clipboard">Clipboard</option>
-            <option value="file">File</option>
+            <option value="clipboard">클립보드</option>
+            <option value="file">파일</option>
         </select>
     </div>
 </body>
+<script src="popup.js"></script>
 </html>
