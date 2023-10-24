@@ -56,7 +56,6 @@ function mousemove(e) {
 function mouseup(e) {
     isSelecting = false;
     document.body.removeEventListener("mousemove", mousemove);
-    darkBackground.parentNode.removeChild(darkBackground);
     var x = e.clientX;
     var y = e.clientY;
     var top = Math.min(y, startY);
@@ -76,19 +75,19 @@ function mouseup(e) {
         }
     );
     document.body.style.cursor = 'auto';
+    darkBackground.parentNode.removeChild(darkBackground);
     selectedArea.parentNode.removeChild(selectedArea);
     document.body.removeEventListener("mouseup", mouseup);
     console.log('mouseup', width, height);
 }
 
 function save(canvas) {
-    if (navigator.msSaveBlob) {
-        var blob = canvas.msToBlob();
-        return navigator.msSaveBlob(blob, '파일명.jpg');
-    } else {
-        var el = document.getElementById("target");
-        el.href = canvas.toDataURL("image/jpeg");
-        el.download = '파일명.jpg';
-        el.click();
-    }
+    el = document.createElement('a');
+    el.id = 'target';
+    el.style.display = 'none';
+    document.body.appendChild(el);
+    el.href = canvas.toDataURL("image/jpeg");
+    el.download = '파일명.jpg';
+    el.click();
+    el.href = ''; // Clear the data URL
 }
