@@ -3,6 +3,10 @@ document.getElementById('captureButton').addEventListener('click', function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         const activeTab = tabs[0];
         if (activeTab) {
+            chrome.scripting.insertCSS({
+                target: { tabId: activeTab.id },
+                files: ["capture.css"]
+            });
             chrome.scripting.executeScript({
                 target: { tabId: activeTab.id },
                 function: startSelection
@@ -14,4 +18,5 @@ document.getElementById('captureButton').addEventListener('click', function() {
 function startSelection() {
     // 메세지 전달
     window.postMessage({ type: "START_SELECTION" }, '*');
+    console.log("startSelection()");
 }
