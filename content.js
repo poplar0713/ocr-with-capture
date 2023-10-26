@@ -73,7 +73,7 @@ async function mouseup(e) {
             c.width = width;
             c.height = height;
             c.getContext('2d').putImageData(img, 0, 0);
-            await saveToClipboard(canvas).then( async () => {
+            await saveToClipboard(c).then( async () => {
                 await displayClipboardImage().catch((err) => {
                     console.error(displayClipboardImage(), err);
                 });
@@ -90,14 +90,17 @@ async function mouseup(e) {
 }
 
 function saveAsFile(canvas) {
-    el = document.createElement('a');
-    el.id = 'target';
+    const defaultName = 'capture';
+    const fileName = prompt('파일명을 입력해주세요:', defaultName);
+    // 사용자가 취소 버튼을 눌렀다면 저장 작업을 중단
+    if (fileName === null) return;
+    const el = document.createElement('a');
     el.style.display = 'none';
     document.body.appendChild(el);
-    el.href = canvas.toDataURL("image/jpg");
-    el.download = 'capture.jpg';
+    el.href = canvas.toDataURL("image/jpeg");
+    el.download = `${fileName}.jpg`;
     el.click();
-    el.href = ''; // Clear the data URL
+    document.body.removeChild(el);
 }
 
 async function saveToClipboard(canvas) {
@@ -140,14 +143,14 @@ async function displayClipboardImage() {
 function createImageOverlay(dataUrl) {
     const overlayBox = document.createElement('div');
     overlayBox.style.position = 'fixed';
-    overlayBox.style.right = '50px';
-    overlayBox.style.top = '50px';
+    overlayBox.style.right = '20px';
+    overlayBox.style.top = '20px';
     overlayBox.style.zIndex = '2147483647';
     overlayBox.style.boxShadow = '0 0 10px rgba(0,0,0,1)';
     overlayBox.style.background = 'white';
     overlayBox.style.borderRadius = '10px';
     overlayBox.style.padding = '10px';
-    overlayBox.style.maxWidth = '300px';
+    overlayBox.style.maxWidth = '1000px';
 
     const closeButton = document.createElement('button');
     closeButton.innerText = 'X';
