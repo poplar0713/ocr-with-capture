@@ -18,5 +18,4 @@ document.getElementById('captureButton').addEventListener('click', function() {
 function startSelection() {
     // 메세지 전달
     window.postMessage({ type: "START_SELECTION" }, '*');
-    console.log("startSelection()");
 }
