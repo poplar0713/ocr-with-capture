@@ -1,3 +1,25 @@
+#popup {
+	text-align: center;
+	font-family: Arial, sans-serif;
+	padding: 5px;
+	border-radius: 4px;
+}
+#popup .title {
+	font-weight: bold;
+}
+#popup .button {
+	background-color: #C4302B;
+	border: none;
+	color: white;
+	padding: 10px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	margin: 5px 2px;
+	cursor: pointer;
+	border-radius: 4px;
+}
 
 /* 캡쳐 시 배경 어둡게 */
 #darkBackground {
