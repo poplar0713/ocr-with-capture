@@ -65,14 +65,37 @@ async function mouseup(e) {
     let width = Math.max(x, start_pageX) - left;
     let height = Math.max(y, start_pageY) - top;
 
+    chrome.runtime.sendMessage({action: "captureVisibleTab"}, (response) => {
+        const dataURL = response;
+        const img = new Image();
+
+        let canvas = document.createElement("canvas");
+        let ctx = canvas.getContext('2d');
+
+        img.src = dataURL;
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+        }
+
+        canvas.getContext('2d').getImageData(left, top, width, height);
+
+
+
+    });
+
     //  html2canvas는 document.body를 기준으로 캡쳐를 한다.
-    await html2canvas(document.body).then(
+    await html2canvas(document.body, {
+        allowTaint : true,
+        useCORS : true
+    }).then(
         async function(canvas) {
-            var c = document.createElement("canvas");
-            var img = canvas.getContext('2d').getImageData(left, top, width, height);
+            let c = document.createElement("canvas");
+            let img = await canvas.getContext('2d').getImageData(left, top, width, height);
             c.width = width;
             c.height = height;
-            c.getContext('2d').putImageData(img, 0, 0);
+            await c.getContext('2d').putImageData(img, 0, 0);
             await saveToClipboard(c).then( async () => {
                 await displayClipboardImage().catch((err) => {
                     console.error(displayClipboardImage(), err);
