@@ -1,4 +1,4 @@
-# ocr-with-capture
+# ocr-with-capture [chrome Extenstion]
 
 ### 껍데기 만들기 : 2023년 10월 20일 ~ 11월 1일
 - 내용 
