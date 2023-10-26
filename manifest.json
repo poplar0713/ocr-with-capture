@@ -3,7 +3,7 @@
     "name": "OCR with Capture",
     "description": "OCR과 결합한 이미지 영역 캡쳐 도구",
     "version": "1.0",
-    "permissions": ["activeTab", "clipboardWrite", "storage", "scripting"],
+    "permissions": ["activeTab", "storage", "scripting", "clipboardRead", "clipboardWrite"],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
