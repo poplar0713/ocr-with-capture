@@ -7,12 +7,11 @@ function captureVisibleTabPromise() {
     });
 }
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "captureVisibleTab") {
-        const dataUrl = await captureVisibleTabPromise();
-        console.log(dataUrl);
-        sendResponse(dataUrl);
-        // 비동기 응답을 보내기 위해 true를 반환
+        captureVisibleTabPromise().then(dataUrl => {
+            sendResponse(dataUrl);
+        });
         return true;
     }
 });
