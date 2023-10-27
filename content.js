@@ -65,47 +65,54 @@ async function mouseup(e) {
     let width = Math.max(x, start_pageX) - left;
     let height = Math.max(y, start_pageY) - top;
 
-    chrome.runtime.sendMessage({action: "captureVisibleTab"}, (response) => {
+    chrome.runtime.sendMessage({action: "captureVisibleTab"}, async (response) => {
+        let canvasEl = document.createElement("canvas");
+        let canvasRenderingContext2D = canvasEl.getContext('2d');
         const dataURL = response;
-        const img = new Image();
-
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-
-        img.src = dataURL;
-        img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+        console.log(response, dataURL);
+        const resImg = new Image();
+        resImg.src = dataURL;
+        resImg.onerror = function (err) {
+            console.log('Failed to load the image.', err);
         }
-
-        canvas.getContext('2d').getImageData(left, top, width, height);
-
-
-
+        resImg.onload = function() {
+            canvasEl.width = resImg.width;
+            canvasEl.height = resImg.height;
+            canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
+            //let imageData = canvasEl.getContext('2d').getImageData(left, top, width, height);
+            //canvasEl.getContext('2d').putImageData(imageData, 0, 0);
+            saveToClipboard(canvasEl).then( () => {
+                displayClipboardImage().catch((err) => {
+                    console.error('displayClipboardImage()', err);
+                })
+            }).catch((err) => {
+                console.error('saveToClipboard()', err);
+            });
+        }
+        //await saveAsFile(canvasEl);
     });
 
     //  html2canvas는 document.body를 기준으로 캡쳐를 한다.
-    await html2canvas(document.body, {
-        allowTaint : true,
-        useCORS : true
-    }).then(
-        async function(canvas) {
-            let c = document.createElement("canvas");
-            let img = await canvas.getContext('2d').getImageData(left, top, width, height);
-            c.width = width;
-            c.height = height;
-            await c.getContext('2d').putImageData(img, 0, 0);
-            await saveToClipboard(c).then( async () => {
-                await displayClipboardImage().catch((err) => {
-                    console.error(displayClipboardImage(), err);
-                });
-            }).catch((err) => {
-                console.error("saveToClipboard", err);
-            });
-            await saveAsFile(c);
-        }
-    );
+    // await html2canvas(document.body, {
+    //     allowTaint : true,
+    //     useCORS : true
+    // }).then(
+    //     async function(canvas) {
+    //         let canvasEl = document.createElement("canvas");
+    //         let img = await canvas.getContext('2d').getImageData(left, top, width, height);
+    //         canvasEl.width = width;
+    //         canvasEl.height = height;
+    //         await canvasEl.getContext('2d').putImageData(img, 0, 0);
+    //         await saveToClipboard(canvasEl).then( async () => {
+    //             await displayClipboardImage().catch((err) => {
+    //                 console.error(displayClipboardImage(), err);
+    //             });
+    //         }).catch((err) => {
+    //             console.error("saveToClipboard", err);
+    //         });
+    //         await saveAsFile(canvasEl);
+    //     }
+    // );
     document.body.style.cursor = 'auto';
     darkBackground.parentNode.removeChild(darkBackground);
     selectedArea.parentNode.removeChild(selectedArea);
