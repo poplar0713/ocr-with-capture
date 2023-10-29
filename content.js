@@ -92,27 +92,6 @@ async function mouseup(e) {
         //await saveAsFile(canvasEl);
     });
 
-    //  html2canvas는 document.body를 기준으로 캡쳐를 한다.
-    // await html2canvas(document.body, {
-    //     allowTaint : true,
-    //     useCORS : true
-    // }).then(
-    //     async function(canvas) {
-    //         let canvasEl = document.createElement("canvas");
-    //         let img = await canvas.getContext('2d').getImageData(left, top, width, height);
-    //         canvasEl.width = width;
-    //         canvasEl.height = height;
-    //         await canvasEl.getContext('2d').putImageData(img, 0, 0);
-    //         await saveToClipboard(canvasEl).then( async () => {
-    //             await displayClipboardImage().catch((err) => {
-    //                 console.error(displayClipboardImage(), err);
-    //             });
-    //         }).catch((err) => {
-    //             console.error("saveToClipboard", err);
-    //         });
-    //         await saveAsFile(canvasEl);
-    //     }
-    // );
     document.body.style.cursor = 'auto';
     darkBackground.parentNode.removeChild(darkBackground);
     selectedArea.parentNode.removeChild(selectedArea);
