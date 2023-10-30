@@ -7,6 +7,38 @@
 #popup .title {
 	font-weight: bold;
 }
+
+#overlayBox {
+	position: fixed;
+	right: 20px;
+	top: 20px;
+	z-index: 2147483647;
+	box-shadow: 0 0 10px rgba(0,0,0,1);
+	background: white;
+	border-radius: 10px;
+	padding: 10px;
+	max-width: 1000px;
+}
+
+#overlayBox #closeButton {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	background: none;
+	border: none;
+	font-size: 15px;
+	font-weight: bolder;
+	cursor: pointer;
+}
+
+#overlayBox #message {
+	color: black;
+	font-weight: bold;
+	margin-bottom: 20px;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
 #popup .button {
 	background-color: #C4302B;
 	border: none;
