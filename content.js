@@ -1,6 +1,5 @@
 let isSelecting = false;
 let start_clientX, start_clientY;
-let start_pageX, start_pageY;
 let darkBackground = null;
 let selectedArea = null;
 
@@ -35,8 +34,6 @@ function mousedown(e) {
     isSelecting = true;
     start_clientX = e.clientX;
     start_clientY = e.clientY;
-    start_pageX = e.pageX;
-    start_pageY = e.pageY;
     document.body.removeEventListener("mousedown", mousedown);
 }
 
@@ -58,18 +55,17 @@ function mousemove(e) {
 async function mouseup(e) {
     isSelecting = false;
     document.body.removeEventListener("mousemove", mousemove);
-    let x = e.pageX;
-    let y = e.pageY;
-    let top = Math.min(y, start_pageY);
-    let left = Math.min(x, start_pageX);
-    let width = Math.max(x, start_pageX) - left;
-    let height = Math.max(y, start_pageY) - top;
+    let x = e.clientX;
+    let y = e.clientY;
+    let top = Math.min(y, start_clientY);
+    let left = Math.min(x, start_clientX);
+    let width = Math.max(x, start_clientX) - left;
+    let height = Math.max(y, start_clientY) - top;
 
     chrome.runtime.sendMessage({action: "captureVisibleTab"}, async (response) => {
         let canvasEl = document.createElement("canvas");
         let canvasRenderingContext2D = canvasEl.getContext('2d');
         const dataURL = response;
-        console.log(response, dataURL);
         const resImg = new Image();
         resImg.src = dataURL;
         resImg.onerror = function (err) {
@@ -78,9 +74,12 @@ async function mouseup(e) {
         resImg.onload = function() {
             canvasEl.width = resImg.width;
             canvasEl.height = resImg.height;
-            canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
-            let imageData = canvasEl.getContext('2d').getImageData(left, top, width, height);
-            canvasEl.getContext('2d').putImageData(imageData, 0, 0);
+            canvasRenderingContext2D.drawImage(resImg, 0 ,0);
+            // const temp = canvasRenderingContext2D.getImageData(left, top, width, height);
+            // // canvasEl.width = temp.width;
+            // // canvasEl.height = temp.height;
+            // // canvasRenderingContext2D.putImageData(temp, 0, 0);
+            //canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
             saveToClipboard(canvasEl).then( () => {
                 displayClipboardImage().catch((err) => {
                     console.error('displayClipboardImage()', err);
