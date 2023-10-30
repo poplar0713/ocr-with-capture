@@ -79,8 +79,8 @@ async function mouseup(e) {
             canvasEl.width = resImg.width;
             canvasEl.height = resImg.height;
             canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
-            //let imageData = canvasEl.getContext('2d').getImageData(left, top, width, height);
-            //canvasEl.getContext('2d').putImageData(imageData, 0, 0);
+            let imageData = canvasEl.getContext('2d').getImageData(left, top, width, height);
+            canvasEl.getContext('2d').putImageData(imageData, 0, 0);
             saveToClipboard(canvasEl).then( () => {
                 displayClipboardImage().catch((err) => {
                     console.error('displayClipboardImage()', err);
@@ -151,40 +151,25 @@ async function displayClipboardImage() {
 
 function createImageOverlay(dataUrl) {
     const overlayBox = document.createElement('div');
-    overlayBox.style.position = 'fixed';
-    overlayBox.style.right = '20px';
-    overlayBox.style.top = '20px';
-    overlayBox.style.zIndex = '2147483647';
-    overlayBox.style.boxShadow = '0 0 10px rgba(0,0,0,1)';
-    overlayBox.style.background = 'white';
-    overlayBox.style.borderRadius = '10px';
-    overlayBox.style.padding = '10px';
-    overlayBox.style.maxWidth = '1000px';
+    overlayBox.id = "overlayBox";
 
     const closeButton = document.createElement('button');
+    closeButton.id = "closeButton"
     closeButton.innerText = 'X';
-    closeButton.style.position = 'absolute';
-    closeButton.style.right = '10px';
-    closeButton.style.top = '10px';
-    closeButton.style.background = 'none';
-    closeButton.style.border = 'none';
-    closeButton.style.fontSize = '12px';
-    closeButton.style.cursor = 'pointer';
     closeButton.onclick = function() {
         document.body.removeChild(overlayBox);
     };
-    overlayBox.appendChild(closeButton);
 
     const message = document.createElement('p');
     message.innerText = '이미지가 캡쳐되었습니다';
-    message.style.fontWeight = 'bold';
-    message.style.marginBottom = '10px';
+    message.id = "message";
 
     const img = new Image();
     img.src = dataUrl;
     img.style.width = '100%';
     img.style.borderRadius = '8px';
 
+    overlayBox.appendChild(closeButton);
     overlayBox.appendChild(message);
     overlayBox.appendChild(img);
     document.body.appendChild(overlayBox);
