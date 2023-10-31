@@ -78,7 +78,7 @@ async function mouseup(e) {
             canvasEl.height = height;
             canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
             saveToClipboard(canvasEl).then( () => {
-                displayClipboardImage().catch((err) => {
+                displayClipboardImage(canvasEl).catch((err) => {
                     console.error('displayClipboardImage()', err);
                 })
             }).catch((err) => {
@@ -124,7 +124,7 @@ async function saveToClipboard(canvas) {
     }
 }
 
-async function displayClipboardImage() {
+async function displayClipboardImage(canvasEl) {
     try {
         const clipboardItems = await navigator.clipboard.read();
         for (const clipboardItem of clipboardItems) {
@@ -133,7 +133,7 @@ async function displayClipboardImage() {
                     const blob = await clipboardItem.getType(type);
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        createImageOverlay(event.target.result);
+                        createImageOverlay(event.target.result, canvasEl);
                     };
                     reader.readAsDataURL(blob);
                 }
@@ -145,7 +145,7 @@ async function displayClipboardImage() {
 }
 
 
-function createImageOverlay(dataUrl) {
+function createImageOverlay(dataUrl, canvas) {
     const overlayBox = document.createElement('div');
     overlayBox.id = "overlayBox";
 
@@ -165,8 +165,16 @@ function createImageOverlay(dataUrl) {
     img.style.width = '100%';
     img.style.borderRadius = '8px';
 
+    const saveButton = document.createElement("button");
+    saveButton.id = "saveButton";
+    saveButton.innerText = "저장";
+    saveButton.onclick = function () {
+        saveAsFile(canvas);
+    }
+
     overlayBox.appendChild(closeButton);
     overlayBox.appendChild(message);
     overlayBox.appendChild(img);
+    overlayBox.appendChild(saveButton);
     document.body.appendChild(overlayBox);
 }
