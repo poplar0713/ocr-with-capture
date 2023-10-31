@@ -53,7 +53,6 @@
 	border-radius: 4px;
 }
 
-/* 캡쳐 시 배경 어둡게 */
 #darkBackground {
 	width: 100%;
 	height: 100%;
@@ -69,32 +68,32 @@
 	border-style: solid;
 }
 
-/* 캡쳐 영역만 밝게 하기 위한 요소 */
-#selectedArea:before, #screenshot:after {
-	border: none !important;
-	content: "" !important;
-	height: 100% !important;
-	position: absolute !important;
-	width: 100% !important
-}
-	
-#selectedArea:before {
-	border-right: 1px solid white !important;
-	border-bottom: 1px solid white !important;
-	left: -100% !important;
-	top: -100% !important
-}
-	
+#selectedArea,
+#selectedArea:before,
 #selectedArea:after {
-	border-top: 1px solid white !important;
-	border-left: 1px solid white !important;
-	left: 0 !important;
-	top: 0 !important
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border: none;
+	content: "";
 }
-	
+
 #selectedArea {
-	height: 100% !important;
-	position: fixed !important;
-	width: 100% !important;
-	z-index: 2147483648 !important
+	position: fixed;
+	z-index: 2147483648;
+	border: 10px dashed red;
+}
+
+#selectedArea:before {
+	border-right: 1px solid white;
+	border-bottom: 1px solid white;
+	left: -100%;
+	top: -100%;
+}
+
+#selectedArea:after {
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	left: 0;
+	top: 0;
 }
