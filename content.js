@@ -14,7 +14,7 @@ window.addEventListener('message', function(event) {
         let bgInnerText = document.createElement("p");
         bgInnerText.style.color = "white";
         bgInnerText.style.fontWeight = "bolder"
-        bgInnerText.style.backgroundColor = "black"
+        bgInnerText.id = "bgInnerText";
         bgInnerText.innerText = "화면을 클릭, 드래그하면 캡쳐할 수 있습니다.";
         darkBackground.appendChild(bgInnerText);
 
@@ -36,6 +36,7 @@ function mousedown(e) {
     start_clientX = e.clientX;
     start_clientY = e.clientY;
     document.body.removeEventListener("mousedown", mousedown);
+    //darkBackground.removeChild("bgInnerText")
 }
 
 function mousemove(e) {
@@ -73,13 +74,8 @@ async function mouseup(e) {
             console.log('Failed to load the image.', err);
         }
         resImg.onload = function() {
-            canvasEl.width = resImg.width;
-            canvasEl.height = resImg.height;
-            canvasRenderingContext2D.drawImage(resImg, 0 ,0);
-            const temp = canvasRenderingContext2D.getImageData(left, top, width, height);
-            canvasEl.width = temp.width;
-            canvasEl.height = temp.height;
-            canvasRenderingContext2D.putImageData(temp, 0, 0);
+            canvasEl.width = width;
+            canvasEl.height = height;
             canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
             saveToClipboard(canvasEl).then( () => {
                 displayClipboardImage().catch((err) => {
