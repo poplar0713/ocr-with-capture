@@ -3,6 +3,7 @@
 	font-family: Arial, sans-serif;
 	padding: 5px;
 	border-radius: 4px;
+	width: 200px;
 }
 #popup .title {
 	font-weight: bold;
@@ -20,6 +21,11 @@
 	margin: 5px 2px;
 	cursor: pointer;
 	border-radius: 4px;
+	transition: background 0.1s;
+}
+
+#popup .button:hover {
+	background: rgba(196, 48, 43, 0.8);
 }
 
 #darkBackground {
@@ -32,7 +38,7 @@
 	opacity: 0.5;
 	text-align: center;
 	box-sizing: border-box;
-	z-index: 99999;
+	z-index: 999999;
 	border-color: black;
 	border-style: solid;
 }
@@ -77,6 +83,7 @@
 	border-radius: 10px;
 	padding: 15px;
 	max-width: 1000px;
+	max-height: 1000px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -102,17 +109,18 @@
 
 #overlayBox #saveButton {
 	align-self: flex-end;
-	background: darkgreen;
+	background: #C4302B;
 	font-size: 15px;
 	font-weight: bolder;
 	color: white;
 	cursor: pointer;
+	margin: 5px;
 	padding: 10px 15px;
 	border: none;
 	border-radius: 5px;
-	transition: background 0.3s;
+	transition: background 0.1s;
 }
 
 #overlayBox #saveButton:hover {
-	background: #006400;
+	background: rgba(196, 48, 43, 0.8);
 }
