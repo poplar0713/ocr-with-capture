@@ -3,6 +3,7 @@ let start_clientX, start_clientY;
 let darkBackground = null;
 let selectedArea = null;
 let DPR;
+let image_blob = null;
 
 window.addEventListener('message', function(event) {
     if (event.data.type === "START_SELECTION") {
@@ -112,13 +113,13 @@ async function saveToClipboard(canvas) {
     try {
         const dataUrl = canvas.toDataURL('image/png');
         const response = await fetch(dataUrl);
-        const blob = await response.blob();
+        image_blob = await response.blob();
         await navigator.clipboard.write([
             new ClipboardItem({
-                'image/png': blob
+                'image/png': image_blob
             })
         ]);
-        console.log('Image copied to clipboard');
+        // console.log('Image copied to clipboard');
     } catch (err) {
         throw err;
     }
@@ -165,6 +166,13 @@ function createImageOverlay(dataUrl, canvas) {
     img.style.width = '100%';
     img.style.borderRadius = '8px';
 
+    const ocrButton = document.createElement("button");
+    ocrButton.id = "ocrButton";
+    ocrButton.innerText = "OCR 분석";
+    ocrButton.onclick = async function () {
+        await sendToClovaOCR();
+    }
+
     const saveButton = document.createElement("button");
     saveButton.id = "saveButton";
     saveButton.innerText = "저장";
@@ -176,5 +184,41 @@ function createImageOverlay(dataUrl, canvas) {
     overlayBox.appendChild(message);
     overlayBox.appendChild(img);
     overlayBox.appendChild(saveButton);
+    overlayBox.appendChild(ocrButton);
     document.body.appendChild(overlayBox);
+}
+
+async function sendToClovaOCR() {
+    const base64Image = convertBlobToBase64(image_blob);
+    const payload = {
+        lang : "ko",
+        request_id : USER_CONFIG.ID,
+        request : "result_type",
+        timestamp : new Date().toDateString(),
+        version: "V2",
+        image : [
+            {
+                format : "png",
+                name : "medium",
+                url : null,
+                data : base64Image
+            }
+        ]
+    };
+    chrome.runtime.sendMessage({
+        action: 'sendToClovaOCR', data: { apiConfig: API_CONFIG, payload: payload }
+    }, response => {
+        if(response.success) {
+            console.log('Image sent to the server successfully');
+        } else {
+            console.error('Failed to send image to the server', response.error);
+        }
+    })
+
+}
+
+async function convertBlobToBase64(blob) {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    return reader.result;
 }
