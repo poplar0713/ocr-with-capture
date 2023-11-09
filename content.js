@@ -166,6 +166,9 @@ function createImageOverlay(dataUrl, canvas) {
     img.style.width = '100%';
     img.style.borderRadius = '8px';
 
+    const buttonContainer = document.createElement("div");
+    buttonContainer.id = "buttonContainer";
+
     const ocrButton = document.createElement("button");
     ocrButton.id = "ocrButton";
     ocrButton.innerText = "OCR 분석";
@@ -180,11 +183,13 @@ function createImageOverlay(dataUrl, canvas) {
         saveAsFile(canvas);
     }
 
+    buttonContainer.appendChild(ocrButton);
+    buttonContainer.appendChild(saveButton);
+
     overlayBox.appendChild(closeButton);
     overlayBox.appendChild(message);
     overlayBox.appendChild(img);
-    overlayBox.appendChild(saveButton);
-    overlayBox.appendChild(ocrButton);
+    overlayBox.appendChild(buttonContainer);
     document.body.appendChild(overlayBox);
 }
 
@@ -193,9 +198,9 @@ async function sendToClovaOCR() {
     const payload = {
         lang : "ko",
         request_id : USER_CONFIG.ID,
-        request : "result_type",
+        request : "string",
         timestamp : new Date().toDateString(),
-        version: "V2",
+        version: "V1",
         image : [
             {
                 format : "png",
