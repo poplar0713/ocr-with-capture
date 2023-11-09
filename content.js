@@ -86,7 +86,6 @@ async function mouseup(e) {
                 console.error('saveToClipboard()', err);
             });
         }
-        //await saveAsFile(canvasEl);
     });
 
     document.body.style.cursor = 'auto';
@@ -119,7 +118,6 @@ async function saveToClipboard(canvas) {
                 'image/png': image_blob
             })
         ]);
-        // console.log('Image copied to clipboard');
     } catch (err) {
         throw err;
     }
@@ -198,23 +196,23 @@ async function sendToClovaOCR() {
     const payload = {
         lang : "ko",
         request_id : USER_CONFIG.ID,
-        request : "string",
-        timestamp : new Date().toDateString(),
+        timestamp : Date.now(),
         version: "V1",
-        image : [
+        images : [
             {
                 format : "png",
-                name : "medium",
+                name : "target",
                 url : null,
                 data : base64Image
             }
         ]
     };
+
     chrome.runtime.sendMessage({
         action: 'sendToClovaOCR', data: { apiConfig: API_CONFIG, payload: payload }
     }, response => {
         if(response.success) {
-            console.log('Image sent to the server successfully');
+            console.log('Image sent to the server successfully', response.data);
         } else {
             console.error('Failed to send image to the server', response.error);
         }
