@@ -100,16 +100,16 @@
 	cursor: pointer;
 }
 
-#overlayBox #message {
-	color: black;
-	font-weight: bold;
-	margin-bottom: 20px;
-	margin-top: 5px;
+#buttonContainer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
+	height: 100%;
+	width: 100%;
 }
 
-#overlayBox #saveButton {
-	align-self: flex-end;
-	background: #C4302B;
+#buttonContainer button {
+	align-self: auto;
 	font-size: 15px;
 	font-weight: bolder;
 	color: white;
@@ -117,10 +117,22 @@
 	margin: 5px;
 	padding: 10px 15px;
 	border: none;
-	border-radius: 5px;
+	border-radius: 2px;
 	transition: background 0.1s;
 }
 
-#overlayBox #saveButton:hover {
+#ocrButton {
+	background: #00bd5f;
+}
+
+#ocrButton:hover {
+	background: #008f45;
+}
+
+#saveButton {
+	background: #C4302B;
+}
+
+#saveButton:hover {
 	background: rgba(196, 48, 43, 0.8);
 }
