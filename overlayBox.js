@@ -24,8 +24,13 @@ function createImageOverlay(dataUrl, canvas) {
     const ocrButton = document.createElement("button");
     ocrButton.id = "ocrButton";
     ocrButton.innerText = "OCR 분석";
-    ocrButton.onclick = async function () {
-        await sendToClovaOCR();
+    ocrButton.onclick = function () {
+        sendToClovaOCR().then((result) => {
+            if(!result) {
+                console.log("sendToClovaOCR() is failed.");s
+            }
+            alert("send To Clova OCR");
+        })
     }
 
     const saveButton = document.createElement("button");

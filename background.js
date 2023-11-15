@@ -16,6 +16,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "sendToClovaOCR") {
+        if(message.data.payload == null) {
+            sendResponse({success: false, error: "[payload is null]"});
+            return true;
+        }
+
+        if(message.data.payload.images[0].data == null) {
+            sendResponse({success: false, error: "[image data is null]"});
+            return true;
+        }
+
         fetch(message.data.apiConfig.CLOVA_OCR_URL, {
             method: 'post',
             headers: {

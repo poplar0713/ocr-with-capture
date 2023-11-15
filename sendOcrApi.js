@@ -1,14 +1,9 @@
 async function sendToClovaOCR() {
-    let base64Image = null;
-
-    convertBlobToBase64(image_blob).then(result => {
-        base64Image = result;
-        console.log("base64Image", result)
-    });
-
+    const base64Image = await convertBlobToBase64(image_blob);
+    const requestId = USER_CONFIG.ID;
     const payload = {
         lang : "ko",
-        request_id : USER_CONFIG.ID,
+        requestId : requestId,
         timestamp : Date.now(),
         version: "V1",
         images : [
