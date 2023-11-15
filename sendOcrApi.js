@@ -1,5 +1,11 @@
 async function sendToClovaOCR() {
-    const base64Image = convertBlobToBase64(image_blob);
+    let base64Image = null;
+
+    convertBlobToBase64(image_blob).then(result => {
+        base64Image = result;
+        console.log("base64Image", result)
+    });
+
     const payload = {
         lang : "ko",
         request_id : USER_CONFIG.ID,
@@ -9,8 +15,8 @@ async function sendToClovaOCR() {
             {
                 format : "png",
                 name : "target",
+                data : base64Image,
                 url : null,
-                data : base64Image
             }
         ]
     };
@@ -23,12 +29,24 @@ async function sendToClovaOCR() {
         } else {
             console.error('Failed to send image to the server', response.error);
         }
-    })
+    });
 
+    return true;
 }
 
-async function convertBlobToBase64(blob) {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    return reader.result;
+function convertBlobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+
+        reader.onloadend = function() {
+            let base64data = reader.result;
+            let result = base64data.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+            resolve(result);
+        };
+
+        reader.onerror = function(error) {
+            reject(error);
+        };
+    });
 }
