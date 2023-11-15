@@ -15,8 +15,15 @@ function saveAsFile(canvas) {
 async function saveToClipboard(canvas) {
     try {
         const dataUrl = canvas.toDataURL('image/png');
-        const response = await fetch(dataUrl);
-        image_blob = await response.blob();
+        // 데이터 URL을 Blob 객체로 변환
+        const data = atob(dataUrl.split(',')[1]);
+        const arrayBuffer = new ArrayBuffer(data.length);
+        const uintArray = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < data.length; i++) {
+            uintArray[i] = data.charCodeAt(i);
+        }
+
+        image_blob = new Blob([uintArray], { type: 'image/png' });
         await navigator.clipboard.write([
             new ClipboardItem({
                 'image/png': image_blob
