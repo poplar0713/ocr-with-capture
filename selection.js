@@ -9,7 +9,6 @@ window.addEventListener('message', function(event) {
         bgInnerText.style.color = "white";
         bgInnerText.style.fontWeight = "bolder"
         bgInnerText.id = "bgInnerText";
-        bgInnerText.innerText = "화면을 클릭, 드래그하면 캡쳐할 수 있습니다.";
         darkBackground.appendChild(bgInnerText);
 
         selectedArea = document.createElement("div");
@@ -21,6 +20,8 @@ window.addEventListener('message', function(event) {
         document.body.addEventListener("mousedown", mousedown);
         document.body.addEventListener("mousemove", mousemove);
         document.body.addEventListener("mouseup", mouseup);
+
+        showMessage("화면을 클릭, 드래그하면 캡쳐할 수 있습니다." , '#FFFFFF', '#000000')
     }
 });
 
@@ -51,37 +52,73 @@ function mousemove(e) {
 async function mouseup(e) {
     isSelecting = false;
     document.body.removeEventListener("mousemove", mousemove);
-    let x = e.clientX * DPR;
-    let y = e.clientY * DPR;
-    let top = Math.min(y, start_clientY * DPR);
-    let left = Math.min(x, start_clientX * DPR);
-    let width = Math.max(x, start_clientX * DPR) - left;
-    let height = Math.max(y, start_clientY * DPR) - top;
-
-    chrome.runtime.sendMessage({action: "captureVisibleTab"}, async (response) => {
-        let canvasEl = document.createElement("canvas");
-        let canvasRenderingContext2D = canvasEl.getContext('2d');
-        const dataURL = response;
-        const resImg = new Image();
-        resImg.src = dataURL;
-        resImg.onerror = function (err) {
-            console.log('Failed to load the image.', err);
-        }
-        resImg.onload = function() {
-            canvasEl.width = width;
-            canvasEl.height = height;
-            canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
-            saveToClipboard(canvasEl).then( () => {
-                displayClipboardImage(canvasEl).catch((err) => {
-                    console.error('displayClipboardImage()', err);
-                })
-            }).catch((err) => {
-                console.error('saveToClipboard()', err);
-            });
-        }
-    });
+    document.body.removeEventListener("mouseup", mouseup);
     document.body.style.cursor = 'auto';
     darkBackground.parentNode.removeChild(darkBackground);
     selectedArea.parentNode.removeChild(selectedArea);
-    document.body.removeEventListener("mouseup", mouseup);
+
+    const x = e.clientX * DPR;
+    const y = e.clientY * DPR;
+    const startX = start_clientX * DPR;
+    const startY = start_clientY * DPR;
+    const top = Math.min(y, startY);
+    const left = Math.min(x, startX);
+    const width = Math.max(x, startX) - left;
+    const height = Math.max(y, startY) - top;
+
+    try {
+        const response = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({action: "captureVisibleTab"}, (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+
+        let canvasEl = document.createElement("canvas");
+        let canvasRenderingContext2D = canvasEl.getContext('2d');
+        canvasEl.width = width;
+        canvasEl.height = height;
+
+        const resImg = new Image();
+        resImg.src = response;
+        resImg.onload = async function() {
+            canvasRenderingContext2D.drawImage(resImg, left, top, width, height, 0, 0, width, height);
+            try {
+                await saveToClipboard(canvasEl);
+                await displayClipboardImage(canvasEl);
+            } catch (err) {
+                console.error('Error in saving to clipboard or displaying image:', err);
+            }
+        };
+        resImg.onerror = function (err) {
+            console.error('Failed to load the image.', err);
+        };
+    } catch (err) {
+        console.error('Error in capturing the tab:', err);
+    }
+}
+
+async function saveToClipboard(canvas) {
+    try {
+        image_base64 = canvas.toDataURL('image/png');
+        // 데이터 URL을 Blob 객체로 변환
+        const data = atob(image_base64.split(',')[1]);
+        const arrayBuffer = new ArrayBuffer(data.length);
+        const uintArray = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < data.length; i++) {
+            uintArray[i] = data.charCodeAt(i);
+        }
+
+        image_blob = new Blob([uintArray], { type: 'image/png' });
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                'image/png': image_blob
+            })
+        ]);
+    } catch (err) {
+        throw err;
+    }
 }
