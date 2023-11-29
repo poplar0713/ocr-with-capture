@@ -13,3 +13,16 @@
   * Naver CLOVA OCR 인식 api 연결 및 테스트
   * api로 캡쳐한 사진(페이지)을 전송하는 기능
   * OCR 결과값을 사용자에게 표시
+- CLOVA OCR : https://www.ncloud.com/product/aiService/ocr
+  * API 생성 가이드 : https://guide.ncloud-docs.com/docs/ko/clovaocr-overview
+
+- config.js 파일 생성 및 작성 필요
+ ```
+ const API_CONFIG = {
+  CLOVA_OCR_URL : '{API 주소}',
+  X_OCR_SECRET : '{Secret 값}'
+ }
+ const USER_CONFIG = {
+  ID : '{UDID 값}'
+ }
+ ```
