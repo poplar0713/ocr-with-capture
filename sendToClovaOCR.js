@@ -16,7 +16,7 @@ async function clickOcrButton() {
 }
 
 async function sendToClovaOCR() {
-    const base64Image = await convertBlobToBase64(image_blob);
+    const base64Image = await getDataURLbody();
     const payload = {
         lang : "ko",
         requestId : USER_CONFIG.ID,
@@ -59,7 +59,7 @@ async function sendToClovaOCR() {
     });
 }
 
-function convertBlobToBase64() {
+function getDataURLbody() {
     return new Promise((resolve, reject) => {
         if(!image_base64) reject('dataURL is not founded');
         let result = image_base64.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
