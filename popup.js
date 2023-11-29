@@ -13,6 +13,7 @@ document.getElementById('captureButton').addEventListener('click', function() {
             });
         }
     });
+    window.close();
 });
 
 function startSelection() {
